@@ -896,7 +896,10 @@ def process_finished_track(track):
         corresponding_frame[idx] = (kf_obj.history_corresponding_frame[idx])
 
     # Drop entries that have not fully entered the frame
-    avg_veh_length = ((sum(veh_length) / len(veh_length)) / 100) * cfg.fully_entered_threshold
+    if len(veh_length) > 0:
+        avg_veh_length = ((sum(veh_length) / len(veh_length)) / 100) * cfg.fully_entered_threshold
+    else:
+        avg_veh_length = 0  # or any other default value
 
     idx_to_drop = []
     for idx in range(track_length):
@@ -1008,7 +1011,7 @@ def final_clean_up(save_dir, visualize):
 
     # Sort tracks based on frame
     all_tracks = [track for track in globals()["final_tracks"].items()]
-    all_tracks = sorted(all_tracks, key=lambda x : x[1]["corresponding_frame"][0])
+    all_tracks = sorted(all_tracks, key=lambda x : x[1]["corresponding_frame"][0] if x[1]["corresponding_frame"] else 0)
     final_tracks = {}
     for i,sorted_track in enumerate(all_tracks):
         final_tracks[i] = sorted_track[1]

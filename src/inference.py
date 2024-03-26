@@ -40,22 +40,31 @@ def evalimage_get_contour(model, path, save_predicted):
 
         # default contour index (if only 1 contour)
         contour_idx = 0
-        contour = np.array(contour)
 
-        if contour.ndim == 1:
-            contour_shape = contour.shape
-            # number of contours found
-            num_contours = contour_shape[0]
-            area_cnt = np.ones(num_contours, )
-            for cnt_idx in range(0, num_contours):
-                area_cnt[cnt_idx] = cv2.contourArea(contour[cnt_idx])
-            # overwrite contour_idx according to the largest contour found
-            contour_idx = np.argmax(area_cnt)
+        # Check the lengths of the sublists in contour
+        lengths = [len(sublist) for sublist in contour]
 
-        cnt = contour[contour_idx]
-        rect = cv2.minAreaRect(cnt)
-        box = cv2.boxPoints(rect)
-        box_img.append(box)
+        # If all sublists have the same length, convert contour into a numpy array
+        if len(set(lengths)) == 1:
+            contour = np.array(contour)
+            if contour.ndim == 1:
+                contour_shape = contour.shape
+                # number of contours found
+                num_contours = contour_shape[0]
+                area_cnt = np.ones(num_contours, )
+                for cnt_idx in range(0, num_contours):
+                    area_cnt[cnt_idx] = cv2.contourArea(contour[cnt_idx])
+                # overwrite contour_idx according to the largest contour found
+                contour_idx = np.argmax(area_cnt)
+
+            cnt = contour[contour_idx]
+            rect = cv2.minAreaRect(cnt)
+            box = cv2.boxPoints(rect)
+            box_img.append(box)
+        else:
+            print("Sublists in contour have different lengths.")
+
+    
 
     return box_img
 
