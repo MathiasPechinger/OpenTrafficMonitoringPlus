@@ -27,7 +27,16 @@ def evalimage_get_contour(model, path, save_predicted):
             # Mask is zero
             continue
         mask = masks[i_mask].astype('uint8') * 255
-        _, contour, _ = cv2.findContours(mask, 1, 1)
+
+        # Check OpenCV version
+        major_ver, minor_ver, _ = cv2.__version__.split('.')
+
+        if major_ver == '4':
+            # For OpenCV 4.X, findContours returns only two arguments
+            contour, _ = cv2.findContours(mask, 1, 1)
+        else:
+            # For OpenCV 3.4.X and below, findContours returns three arguments
+            _, contour, _ = cv2.findContours(mask, 1, 1)
 
         # default contour index (if only 1 contour)
         contour_idx = 0
@@ -65,12 +74,13 @@ def run_inference(temp_folder, opentraffic_config):
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = opentraffic_config.num_classes
     cfg.MODEL.WEIGHTS = opentraffic_config.weights_path
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = opentraffic_config.score_threshold
+    cfg.MODEL.DEVICE = "cpu"
 
     num_images = len([
         name for name in os.listdir(temp_folder + "preprocessed_images")
         if ".jpg" in name
     ])
-    boxes_rot_cell = np.zeros((num_images), dtype=np.object)
+    boxes_rot_cell = np.zeros((num_images), dtype=object)
 
     model = DefaultPredictor(cfg)
 

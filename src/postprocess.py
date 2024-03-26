@@ -229,7 +229,7 @@ def length_class(car_corners, resolution, meter_to_px, orientation_offset, linea
                               [resolution[0] / 2, 0],
                               [0, resolution[1] / 2],
                               [resolution[0] / 2, resolution[1] / 2]],
-                             dtype=np.object)
+                             dtype=object)
 
     if radial_displacement == 2:
         car_corners = vehicle_resize_l_shape(car_corners, pic_centroids, drone_height,
