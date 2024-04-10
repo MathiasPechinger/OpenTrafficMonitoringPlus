@@ -58,6 +58,45 @@ Here is a detailed Table with position error results from publication (1), where
 ![Paper Image](src/assets/table_results.png)
 
 # Installation
+
+
+## Installation Windows
+
+1. Create Conda Environment
+You'll begin by opening your command line interface and typing the following command. This creates a new conda environment named myenv (you can name it whatever you prefer).
+
+```
+conda create --name otmp_env python=3.11
+```
+
+I recommend Python 3.8 because, as of my last update, it's a version that is compatible with most libraries and frameworks. Detectron2, for example, has specific Python version requirements.
+
+2. Activate the Environment
+Activate the newly created environment with the following command:
+
+
+```
+conda activate myenv
+```
+
+3. Install Modules
+Now, install the required modules. Some packages might be available directly through conda, but others, like opencv-contrib-python, might need to be installed via pip. It's common to use pip in a conda environment when a package is not available through conda.
+
+```
+conda install -c conda-forge opencv
+pip install opencv-contrib-python tqdm shapely scikit-learn
+```
+
+4. Install Detectron2
+Detectron2 installation can be a bit more involved due to its dependencies on specific versions of PyTorch and torchvision, among others. You will typically follow the instructions on the Detectron2 GitHub page, which might look something like this:
+
+```
+conda install pytorch torchvision -c pytorch
+pip install 'git+https://github.com/facebookresearch/detectron2.git'
+```
+
+
+## Installation Ubuntu
 1. Install [Detectron2](https://github.com/facebookresearch/detectron2)
 1. Clone this repository
 2. Install dependencies (take care of the release versions and also the installation order of cv2 and cv2-contrib)
@@ -66,6 +105,7 @@ Here is a detailed Table with position error results from publication (1), where
    ```
 4. Download our weights and store them in the [maskrcnn](src/maskrcnn/) folder.
    The network was trained on approximately 9000 vehicle instances (cars, trucks, busses), mainly from European and Asian data sources. Note: This labeled dataset cannot be provided.
+
 
 
 # Getting started
@@ -206,3 +246,4 @@ year={2020}
 # Acknowledgment
 The authors acknowledge the financial support by the Federal Ministry of Education and Research of
 Germany (BMBF) in the framework of FH-Impuls (project number 03FH7I02IA).
+
