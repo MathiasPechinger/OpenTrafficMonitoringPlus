@@ -76,7 +76,7 @@ Activate the newly created environment with the following command:
 
 
 ```
-conda activate myenv
+conda activate otmp_env
 ```
 
 3. Install Modules
