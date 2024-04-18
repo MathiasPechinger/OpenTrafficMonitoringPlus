@@ -41,7 +41,7 @@ default_config = Config({
     # <-------- PREPROCESSING -------->
 
     # limits the number of frames. set to -1 for entire video
-    "num_frames": -1,
+    "num_frames": -1, # default -1
     # Processes (CPU cores) used for image registration
     "num_workers": 4,
     # Whether to register the images (fixed frame for all images - important for tracking!)
@@ -66,13 +66,14 @@ default_config = Config({
     "detections_per_image": 150,
     # Weights used for inference
     "weights_path": "maskrcnn/model_final_FHD_50kIt_bs2_noAug_790img.pth",
+    # "weights_path": "maskrcnn/model_final.pth",
     # Detectron2 config used for inference. (Has nothing to do with this config)
     "detectron2_config": "./maskrcnn/mask_rcnn_R_50_FPN_1x.yaml",
     # Number of classes in the model
-    "num_classes": 1,
+    "num_classes": 1, #default 1
     # Save predicted Images from MASKRCNN in 'temp/images_after_network'
     # -> reduces performance but good for quality evaluation
-    "save_predicted": False,
+    "save_predicted": True,
     # Score threshold for the detections
     "score_threshold": 0.5,
 

@@ -79,9 +79,12 @@ if __name__ == "__main__":
     parse_args()
 
     if args.videos:
+        print("processing videos...")
         process_videos(*args.videos.split(":"))
 
     if args.images:
+        print("processing images...")
+
         subfolders = [f.path + "/" for f in os.scandir(args.images.split(":")[0]) if f.is_dir()]
         if len(subfolders) == 0:
             # Single dir with images

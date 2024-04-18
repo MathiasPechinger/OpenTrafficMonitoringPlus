@@ -6,10 +6,11 @@ from tqdm import tqdm
 from detectron2.config import get_cfg
 from detectron2.utils import visualizer
 from detectron2.engine.defaults import DefaultPredictor
+import csv
 
 def evalimage_get_contour(model, path, save_predicted):
     image = cv2.imread(path)
-    pred = model(image)['instances']
+    pred = model(image)['instances']   
 
     if save_predicted:
         image_name = path.split("/")[-1]
@@ -18,6 +19,26 @@ def evalimage_get_contour(model, path, save_predicted):
         save_path = str(Path(os.path.abspath(path)).parents[1]) \
                     + "/images_after_network/" + image_name
         cv2.imwrite(save_path, image_object.get_image())
+
+        
+        # Get classes, bounding boxes, and masks
+        classes = pred.pred_classes.cpu().numpy()
+        boxes = pred.pred_boxes.tensor.cpu().numpy()
+        masks = pred.pred_masks.cpu().numpy()
+
+        # Save classes, bounding boxes, and masks
+        np.save(save_path.replace('.jpg', '_classes.npy'), classes)
+        np.save(save_path.replace('.jpg', '_boxes.npy'), boxes)
+        np.save(save_path.replace('.jpg', '_masks.npy'), masks)
+
+        # Draw class labels on the image
+        for i, box in enumerate(boxes):
+            class_id = classes[i]
+            offset = 10
+            cv2.putText(image, str(class_id), (int(box[0]+offset), int(box[1])), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+
+        # Save the image with class labels
+        cv2.imwrite(save_path.replace('.jpg', '_labeled.jpg'), image)
 
     masks = pred.pred_masks.cpu().numpy()
     box_img = []
@@ -83,7 +104,7 @@ def run_inference(temp_folder, opentraffic_config):
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = opentraffic_config.num_classes
     cfg.MODEL.WEIGHTS = opentraffic_config.weights_path
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = opentraffic_config.score_threshold
-    cfg.MODEL.DEVICE = "cpu"
+    cfg.MODEL.DEVICE = "cuda"
 
     num_images = len([
         name for name in os.listdir(temp_folder + "preprocessed_images")

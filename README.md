@@ -97,13 +97,41 @@ pip install 'git+https://github.com/facebookresearch/detectron2.git'
 
 
 ## Installation Ubuntu
-1. Install [Detectron2](https://github.com/facebookresearch/detectron2)
-1. Clone this repository
-2. Install dependencies (take care of the release versions and also the installation order of cv2 and cv2-contrib)
-   ```
-   pip install -r requirements.txt
-   ```
-4. Download our weights and store them in the [maskrcnn](src/maskrcnn/) folder.
+1. Pre-Requisites:
+
+```
+git clone https://github.com/MathiasPechinger/OpenTrafficMonitoringPlus.git
+cd OpenTrafficMonitoringPlus/
+sudo apt update && sudo apt upgrade -y
+sudo apt install python3.8 python3-pip -y
+sudo apt install build-essential libssl-dev libffi-dev python3-dev -y
+sudo apt install libopencv-dev -y
+python3 -m pip install --upgrade pip
+```
+
+install a vritual environment in your OpenTrafficMonitoringPlus folder:
+
+```
+cd OpenTrafficMonitoringPlus
+pip install virtualenv
+virtualenv venv
+source venv/bin/activate
+```
+
+Install dependencies
+```
+source venv/bin/activate
+pip install opencv-python opencv-contrib-python tqdm shapely scikit-learn
+pip install torch torchvision torchaudio
+```
+
+
+Install detectron:
+```
+pip install 'git+https://github.com/facebookresearch/detectron2.git'
+```
+
+4. Download the weights and store them in the [maskrcnn](src/maskrcnn/) folder.
    The network was trained on approximately 9000 vehicle instances (cars, trucks, busses), mainly from European and Asian data sources. Note: This labeled dataset cannot be provided.
 
 
@@ -132,6 +160,8 @@ download the data hosted on the [FAU University](https://www.fau.eu/) server or 
 * [1920x1080 weights](https://faubox.rrze.uni-erlangen.de/getlink/fi3nEfe6oLCeH4ULPjDE8j/model_final_FHD_50kIt_bs2_noAug_790img.pth) or [1280x720 weights](https://faubox.rrze.uni-erlangen.de/getlink/fiJJkPcvtJZ2JK7DUMFb6z/model_final_HDR_30kIt_bs2_Aug_790img.pth) | [mirror 1080](https://drive.google.com/file/d/19hMb17Uj5JlITUaGo7JEzdmrfV1ugxel/view?usp=sharing) | [mirror 720](https://drive.google.com/file/d/1zCmQz6bkHwNRiJFgymPylP6p558WFtUP/view?usp=sharing)
 * Full-HD resolution yields better results
 # Apply your own training 
+
+## Standard procedure
 If you want to increase the detection performance, create a labeled training data set and apply transfer learning. \
 The easiest way to start is by annotating the data using the open sourced [VIA Image Annotator](http://www.robots.ox.ac.uk/~vgg/software/via). \
 To get started with an example, check our [provided labeled data set](https://faubox.rrze.uni-erlangen.de/getlink/fi2x2oaNQfM55UgBP2YBB6Vp/IEEE_IV_2020_LabelData_only_A4.zip) used for the publictations. \
@@ -149,6 +179,24 @@ Following steps are necessary to create your training/validation data set with o
 # Train from our weights
     python train.py --dataset_train=./custom_data/train_data/ --weights=./maskrcnn/model_final.pth
 # run python train.py --help for a detailed list of all possible arguments 
+```
+
+## Run training for multiple classes
+```
+python train.py --dataset_train=./yourtrainingdata/ --num_classes=6 --weights=./maskrcnn/model_final_FHD_50kIt_bs2_noAug_790img.pth --lr=0.001 --max_iter=100 --batch_size=10 --dataset_eval=./test_data_paper/
+```
+
+## Export inference results to csv
+In order to retrain the network for multiple classes we run the inference and extract the results to csv files. These files may then be used to be imported into e.g. matlab GroundTruthLabeler.
+
+Therefore, run:
+```
+python Scripts/convertResultsToHull.py
+```
+
+And check the results using:
+```
+python Scripts/checkHulls.py
 ```
 
 # Config 

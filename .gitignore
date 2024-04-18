@@ -151,3 +151,6 @@ dmypy.json
 *.png
 *.jpg
 *.mp4
+
+# folder for other video files
+src/video_storage/
